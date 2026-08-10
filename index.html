@@ -1,247 +1,96 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Pick3 Playtest</title>
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Pick3 v7 Playtest</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#5b914e;font-family:monospace;color:#fff}button{font:inherit;font-weight:bold;color:#fff;border:3px solid #17130e;border-radius:5px;padding:11px;background:#438ed8;box-shadow:0 4px #17130e}button:disabled{opacity:.4}.w{max-width:900px;margin:auto;padding:8px}.p{background:#604b2f;border:4px solid #21190f;box-shadow:inset 0 0 0 3px #96784e;padding:9px;margin-bottom:8px}.top{display:grid;grid-template-columns:1fr 1fr;gap:8px}.target{text-align:center;background:#282117;padding:7px}.target b{font-size:30px;color:#ffd15c}.score{display:flex;align-items:center;justify-content:center;gap:6px;margin:8px}.n{font-size:28px;font-weight:bold;padding:5px 10px;border:3px solid #18130d;min-width:60px;text-align:center}.base{background:#eee;color:#111}.bonus{background:#914cc5}.total{font-size:34px;color:#79ef6d}.bounce{animation:b .4s}.stats{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}.stat{background:#2c241a;padding:6px;border:2px solid #17130e}.totems{display:flex;gap:5px;justify-content:center}.totem{background:#4a3563;border:3px solid #17130e;padding:8px;min-width:80px;text-align:center}.msg{text-align:center;min-height:46px;padding:10px;font-weight:bold;font-size:16px;color:#fff1b7}.board{min-height:170px;display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap}.card{width:105px;height:132px;background:#ddcca5;color:#241a0e;border:4px solid #21180e;box-shadow:inset 0 0 0 3px #f4e8c9,5px 5px #21180e88;padding:7px;position:relative;text-align:center}.card.sel{transform:translateY(-9px);outline:5px solid #fff36a}.card.pair{animation:f .55s 2}.ico{font-size:29px}.name{font-weight:bold;margin-top:7px}.type{font-size:10px}.val{position:absolute;right:6px;bottom:4px;font-size:18px;font-weight:bold}.new{position:absolute;right:3px;top:3px;background:#3989df;color:white;font-size:8px;padding:2px}.actions{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}.submit{background:#914cc5}.discard{background:#735a3c}.merchant{background:#e09632}.row{display:flex;gap:8px;margin-top:8px}.pile{flex:1;text-align:center;background:#34291c;border:3px solid #17130e;padding:7px}.modal{display:none;position:fixed;inset:0;background:#000c;z-index:9;padding:12px;overflow:auto}.modal.on{display:flex;align-items:flex-start;justify-content:center}.box{width:min(680px,100%);margin:auto 0;background:#604b2f;border:5px solid #17130e;padding:12px}.offers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.offer{background:#e2d0a4;color:#21180e;border:4px solid #17130e;padding:8px;text-align:center;opacity:0;transform:scale(.3)}.offer.show{animation:r .55s forwards}.offer button{background:#4e9c4c}.reroll{background:#914cc5}.close{background:#555}@keyframes b{50%{transform:scale(1.35)}}@keyframes f{50%{outline:6px solid #ffd84f;transform:scale(1.08)}}@keyframes r{to{opacity:1;transform:none}}@media(max-width:600px){.top{grid-template-columns:1fr}.card{width:92px;height:120px}.offers{grid-template-columns:1fr}.n{font-size:23px}.total{font-size:29px}}
+*{box-sizing:border-box}body{margin:0;background:#568c4b;font-family:monospace;color:#fff}button,select{font:inherit}button{font-weight:900;color:#fff;border:3px solid #17130e;border-radius:5px;padding:10px;background:#428bd7;box-shadow:0 4px #17130e}button:disabled{opacity:.4}.w{max-width:920px;margin:auto;padding:8px}.p{background:#604b2f;border:4px solid #21190f;box-shadow:inset 0 0 0 3px #96784e;padding:9px;margin-bottom:8px}.top{display:grid;grid-template-columns:1fr 1fr;gap:8px}.target{text-align:center;background:#282117;padding:7px}.target b{font-size:30px;color:#ffd15c}.score{display:flex;align-items:center;justify-content:center;gap:7px;margin:7px}.n{font-size:27px;font-weight:bold;padding:5px 9px;border:3px solid #18130d;min-width:65px;text-align:center}.base{background:#eee;color:#111}.mult{background:#914cc5}.total{font-size:34px;color:#79ef6d}.bounce{animation:b .4s}.stats,.actions,.totems{display:flex;justify-content:center;gap:7px;flex-wrap:wrap}.stat{background:#2c241a;padding:6px;border:2px solid #17130e}.totem{background:#4a3563;border:3px solid #17130e;padding:8px;min-width:90px;text-align:center}.msg{text-align:center;min-height:48px;padding:10px;font-size:16px;font-weight:bold;color:#fff1b7}.board{min-height:170px;display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap}.card{width:104px;height:132px;background:#ddcca5;color:#241a0e;border:4px solid #21180e;box-shadow:inset 0 0 0 3px #f4e8c9,5px 5px #21180e88;padding:7px;position:relative;text-align:center;transition:.15s}.card.sel{transform:translateY(-9px);outline:5px solid #fff36a}.card.held{outline:5px solid #4aa9ff}.card.pair{animation:f .55s 2}.lock{position:absolute;left:3px;top:3px;background:#358fe0;color:#fff;padding:2px 4px;font-size:9px}.fresh{position:absolute;right:3px;top:3px;background:#4d9c49;color:#fff;padding:2px;font-size:8px}.ico{font-size:28px}.name{font-weight:bold;margin-top:7px}.type{font-size:10px}.val{position:absolute;right:6px;bottom:4px;font-size:18px;font-weight:bold}.hold{background:#d18b2f}.submit{background:#914cc5}.discard{background:#735a3c}.deck{background:#58754a}.row{display:flex;gap:8px;margin-top:8px}.pile{flex:1;text-align:center;background:#34291c;border:3px solid #17130e;padding:7px}.modal{display:none;position:fixed;inset:0;background:#000c;z-index:20;padding:12px;overflow:auto}.modal.on{display:flex;align-items:flex-start;justify-content:center}.box{width:min(700px,100%);background:#604b2f;border:5px solid #17130e;padding:12px;margin:auto 0}.pointsSticky{position:sticky;top:0;z-index:30;background:#211a10;border:4px solid #ffd85b;padding:10px;text-align:center;font-size:25px;color:#ffd85b;margin-bottom:9px}.offers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.offer{background:#e2d0a4;color:#21180e;border:4px solid #17130e;padding:8px;text-align:center;opacity:0;transform:scale(.4)}.offer.show{animation:r .45s forwards}.offer button{background:#4e9c4c;margin-top:5px}.freeze{background:#735a3c!important}.freeze.on{background:#3f8fe8!important}.reroll{background:#914cc5}.close{background:#555}.dmrow{background:#34291c;padding:8px;margin:7px 0;border:2px solid #17130e}.modtag{color:#ffe8a6;font-size:12px;margin-top:5px}
+@keyframes b{50%{transform:scale(1.35)}}@keyframes f{50%{outline:6px solid #ffd84f;transform:scale(1.08)}}@keyframes r{to{opacity:1;transform:none}}
+@media(max-width:600px){.top{grid-template-columns:1fr}.card{width:90px;height:118px}.offers{grid-template-columns:1fr}.n{font-size:22px;min-width:55px}.total{font-size:28px}.box{padding:8px}}
 </style></head><body><div class="w">
-<div class="top"><div class="p"><div class="target">ROUND <span id="round">1</span><br>Target <b id="target">9</b></div><div style="text-align:center;font-size:10px;margin-top:7px">BASE &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MULTIPLIER &nbsp;&nbsp;&nbsp;&nbsp; TOTAL</div><div class="score"><span id="base" class="n base">0</span>×<span id="bonus" class="n bonus">1×</span>=<span id="total" class="total">0</span></div><div class="stats"><span class="stat">Draws <b id="draws">2</b></span><span class="stat">Points <b id="points">0</b></span><span class="stat">Deck <b id="deckn">6</b></span></div></div><div class="p"><b>TOTEMS</b><div id="totems" class="totems"></div></div></div>
-<div class="p"><div id="msg" class="msg">Press DRAW to begin.</div><div id="board" class="board"></div><div class="actions"><button id="draw">DRAW 3</button><button id="holdbtn" style="background:#d18b2f" disabled>HOLD (0/1)</button><button id="submit" class="submit" disabled>SUBMIT SCORE</button><button id="disc" class="discard">DISCARD (<span id="discn">0</span>)</button><button id="deckbtn" class="merchant">DECK MANAGER</button></div><div class="row"><div class="pile">Draw pile<br><b id="pilen">6</b></div><div class="pile">Selected Score<br><b id="preview">—</b></div></div></div></div>
+<div class="top"><div class="p"><div class="target">ROUND <span id="round">1</span><br>Target <b id="target">9</b></div>
+<div style="text-align:center;font-size:10px;margin-top:6px">BASE × MULTIPLIER = TOTAL</div>
+<div class="score"><span id="base" class="n base">0</span>×<span id="mult" class="n mult">1.00×</span>=<span id="total" class="total">0</span></div>
+<div class="stats"><span class="stat">Draws <b id="draws">2</b></span><span class="stat">Points <b id="points">0</b></span><span class="stat">Deck <b id="deckn">6</b></span></div></div>
+<div class="p"><b>TOTEMS</b><div id="totems" class="totems"></div></div></div>
+<div class="p"><div id="msg" class="msg">Press DRAW 3 to begin.</div><div id="board" class="board"></div>
+<div class="actions"><button id="draw">DRAW 3</button><button id="hold" class="hold" disabled>HOLD (0/1)</button><button id="submit" class="submit" disabled>SUBMIT SCORE</button><button id="disc" class="discard">DISCARD (0)</button><button id="deckbtn" class="deck">DECK MANAGER</button></div>
+<div class="row"><div class="pile">Live deck<br><b id="pilen">6</b></div><div class="pile">Selected<br><b id="preview">—</b></div></div></div></div>
+
 <div id="dm" class="modal"><div class="box"><h2>Discard Pile</h2><div id="dl" class="board"></div><button class="close" onclick="dm.classList.remove('on')">CLOSE</button></div></div>
-<div id="deckm" class="modal"><div class="box"><h2>DECK MANAGER</h2><p>Choose the exact cards in your unlocked slots. Bought Card Modifiers are applied here by spending copies of that card's resource.</p><div id="resourceCounts" style="margin:8px 0;color:#ffd85b"></div><div id="deckedit"></div><button class="close" onclick="deckm.classList.remove('on')">DONE</button></div></div>
-<div id="shop" class="modal"><div class="box"><h2>MERCHANT</h2><div id="storePoints" style="position:sticky;top:0;z-index:20;background:#211a10;border:4px solid #ffd85b;padding:10px;text-align:center;font-size:24px;color:#ffd85b;margin-bottom:8px">POINTS OWNED: 0</div><div id="summary"></div><div id="spin" class="msg">SPINNING...</div><div id="offers" class="offers"></div><div class="actions" style="margin-top:10px"><button id="reroll" class="reroll">REROLL — 1 POINT</button><button id="next" class="close">NEXT ROUND</button></div></div></div>
+<div id="deckm" class="modal"><div class="box"><h2>Deck Manager</h2><p>Edit only between rounds. Modifiers attach to one physical deck card.</p><div id="resources"></div><div id="deckedit"></div><button class="close" onclick="deckm.classList.remove('on')">DONE</button></div></div>
+<div id="shop" class="modal"><div class="box"><div id="storePoints" class="pointsSticky">POINTS OWNED: 0</div><h2>MERCHANT</h2><div id="summary"></div><div id="spin" class="msg"></div><div id="offers" class="offers"></div><div class="actions" style="margin-top:10px"><button id="reroll" class="reroll">REROLL — 1 POINT</button><button id="next" class="close">NEXT ROUND</button></div></div></div>
+
 <script>
 const I={plank:['Plank','Craft','🔧',1],stick:['Stick','Craft','🔧',1],iron:['Iron','Ore','◆',3],gold:['Gold','Ore','◆',4],bone:['Bone','Loot','🦴',1],leather:['Leather','Loot','🦴',2],bread:['Bread','Food','🍴',2],meat:['Meat','Food','🍴',3]};
 const U=[
-['Polished','Card Modifier','This card gets +1 Base Nugget.','modifier','plus1',4,4],
-['Quick','Card Modifier','When this card is drawn, draw 1 extra card.','modifier','extra',5,5],
-['Builder Totem','Totem','Pairs give +1 more bonus.','totem','pair',4,0],
-['Collector Totem','Totem','Different Items gives +2 Base.','totem','items',5,0],
-['Explorer Totem','Totem','Different Types gives +0.25× Multiplier.','totem','types',6,0],
-['Prospector Totem','Totem','All Ore cards get +1 Base Nugget.','totem','oreTotem',7,0],
-['Extra Draw','Permanent','+1 Draw each round.','permanent','draw',5,0],
-['Open Slot','Permanent','Add one random new card slot to your deck.','permanent','slot',3,0]
-,
-['Hoarder Totem','Totem','+1 Hold Limit.','totem','hold',6,0]
+{name:'Polished',label:'CARD MODIFIER',desc:'+1 Base Nugget on this card.',cat:'mod',effect:'plus1',cost:4,res:4},
+{name:'Quick',label:'CARD MODIFIER',desc:'When drawn, draw +1 extra card.',cat:'mod',effect:'quick',cost:5,res:5},
+{name:'Builder Totem',label:'TOTEM',desc:'Pairs give +1 more Base.',cat:'totem',effect:'pair',cost:4},
+{name:'Collector Totem',label:'TOTEM',desc:'Different Items gives +2 Base.',cat:'totem',effect:'items',cost:5},
+{name:'Explorer Totem',label:'TOTEM',desc:'Different Types gives +0.25×.',cat:'totem',effect:'types',cost:6},
+{name:'Prospector Totem',label:'TOTEM',desc:'All Ore cards +1 Base.',cat:'totem',effect:'ore',cost:7},
+{name:'Hoarder Totem',label:'TOTEM',desc:'+1 Hold Limit.',cat:'totem',effect:'hold',cost:6},
+{name:'Extra Draw',label:'PERMANENT',desc:'+1 Draw each round.',cat:'perm',effect:'draw',cost:5},
+{name:'Open Slot',label:'PERMANENT',desc:'Add one deck slot.',cat:'perm',effect:'slot',cost:3}
 ];
-let S={round:1,target:9,base:0,mult:1,points:0,draws:2,deck:[{id:'plank',mod:null,stacks:0},{id:'plank',mod:null,stacks:0},{id:'iron',mod:null,stacks:0},{id:'gold',mod:null,stacks:0},{id:'bone',mod:null,stacks:0},{id:'leather',mod:null,stacks:0}],pile:[],board:[],discard:[],sel:new Set(),totems:[],ownedMods:[],drawMod:0,active:true,itemHits:0,typeHits:0,rerolls:0,busy:false,holdLimit:1,held:new Set(),shopOffers:[],frozen:null};
-const $=x=>document.getElementById(x),wait=n=>new Promise(r=>setTimeout(r,n)),sh=a=>[...a].sort(()=>Math.random()-.5),uid=()=>Math.random().toString(36).slice(2);
-function v(c){
- let n=I[c.id][3];
- if(c.mod==='plus1')n+=c.stacks;
- if(I[c.id][1]=='Ore'&&S.totems.includes('oreTotem'))n+=1;
- return n
-}function tb(x){return S.totems.filter(t=>t==x).length}
-function group(){
- let c=S.board.filter(x=>S.sel.has(x.u));if(c.length<3)return null;
- let ni=new Set(c.map(x=>x.id)).size,nt=new Set(c.map(x=>I[x.id][1])).size;
- if(nt>=3&&ni>=3){
-   let extra=Math.max(0,nt-3);
-   return['DIFFERENT TYPES',0.5+extra*0.25+0.25*tb('types'),'types'];
- }
- if(ni>=3){
-   let extra=Math.max(0,ni-3);
-   return['DIFFERENT ITEMS',3+extra+2*tb('items'),'items'];
- }
- return null
+let S={round:1,target:9,base:0,mult:1,points:0,draws:2,deck:['plank','plank','iron','gold','bone','leather'].map((id,i)=>({id,mod:null,stacks:0,key:i+'a'})),live:[],board:[],discard:[],sel:new Set(),held:new Set(),pairPaid:new Set(),totems:[],ownedMods:[],inventory:Object.fromEntries(Object.keys(I).map(k=>[k,20])),drawMod:0,active:true,busy:false,itemHits:0,typeHits:0,shopOffers:[],frozen:null,rerolls:0};
+const $=x=>document.getElementById(x),wait=n=>new Promise(r=>setTimeout(r,n)),sh=a=>{a=[...a];for(let i=a.length-1;i;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a},uid=()=>Math.random().toString(36).slice(2);
+function tb(x){return S.totems.filter(t=>t===x).length} function score(){return Math.floor(S.base*S.mult)}
+function val(c){let n=I[c.id][3]+(c.mod==='plus1'?c.stacks:0);if(I[c.id][1]==='Ore'&&S.totems.includes('ore'))n++;return n}
+function group(){let c=S.board.filter(x=>S.sel.has(x.u));if(c.length<3)return null;let ni=new Set(c.map(x=>x.id)).size,nt=new Set(c.map(x=>I[x.id][1])).size;if(nt>=3&&ni>=3)return['DIFFERENT TYPES',.5+Math.max(0,nt-3)*.25+.25*tb('types'),'types'];if(ni>=3)return['DIFFERENT ITEMS',3+Math.max(0,ni-3)+2*tb('items'),'items'];return null}
+function render(){
+round.textContent=S.round;target.textContent=S.target;base.textContent=S.base;mult.textContent=S.mult.toFixed(2)+'×';total.textContent=score();draws.textContent=S.draws;points.textContent=S.points;deckn.textContent=S.deck.length;pilen.textContent=S.live.length;disc.textContent='DISCARD ('+S.discard.length+')';
+board.innerHTML='';S.board.forEach(c=>{let x=I[c.id],d=document.createElement('div');d.className='card'+(S.sel.has(c.u)?' sel':'')+(S.held.has(c.u)?' held':'');d.dataset.u=c.u;d.innerHTML=`${S.held.has(c.u)?'<span class=lock>🔒 HOLD</span>':''}${c.fresh?'<span class=fresh>NEW</span>':''}<div class=ico>${x[2]}</div><div class=name>${x[0]}</div><div class=type>${x[1]}</div><div class=val>${val(c)}N</div>`;d.onclick=()=>{if(S.busy)return;S.sel.has(c.u)?S.sel.delete(c.u):S.sel.add(c.u);render()};board.appendChild(d)});
+let g=group();preview.textContent=g?(g[0]+' '+(g[2]==='types'?'+'+g[1].toFixed(2)+'×':'+'+g[1]+' Base')):'—';submit.disabled=S.busy||!g;let hl=1+tb('hold');hold.textContent=`HOLD (${S.held.size}/${hl})`;hold.disabled=S.busy||S.sel.size===0;draw.disabled=S.busy||S.draws<=0;
+totems.innerHTML='';let names={pair:'Builder',items:'Collector',types:'Explorer',ore:'Prospector',hold:'Hoarder'};for(let i=0;i<3;i++){let d=document.createElement('div');d.className='totem';d.textContent=S.totems[i]?names[S.totems[i]]:'EMPTY';totems.appendChild(d)}
 }
-function render(){round.textContent=S.round;target.textContent=S.target;base.textContent=S.base;bonus.textContent=S.mult.toFixed(1)+'×';total.textContent=Math.floor(S.base*S.mult);draws.textContent=S.draws;points.textContent=S.points;deckn.textContent=S.deck.length;pilen.textContent=S.pile.length;discn.textContent=S.discard.length;board.innerHTML='';S.board.forEach(c=>{let x=I[c.id],d=document.createElement('div');d.className='card'+(S.sel.has(c.u)?' sel':'')+(S.held.has(c.u)?' pair':'');d.dataset.u=c.u;d.innerHTML=`${c.fresh?'<i class="new">NEW</i>':''}<div class=ico>${x[2]}</div><div class=name>${x[0]}</div><div class=type>${x[1]}</div><div class=val>${v(c)}N</div>`;d.onclick=()=>{if(S.busy)return;S.sel.has(c.u)?S.sel.delete(c.u):S.sel.add(c.u);render()};board.appendChild(d)});let g=group();preview.textContent=g?(g[0]+(g[2]=='types'?' +'+g[1].toFixed(2)+'×':' +'+g[1]+' Base')):'—';submit.disabled=S.busy||!g;
-let effectiveHold=S.holdLimit+tb('hold');
-holdbtn.textContent=`HOLD (${S.held.size}/${effectiveHold})`;
-holdbtn.disabled=S.busy||S.sel.size===0;
-draw.disabled=S.busy||S.draws<=0;totems.innerHTML='';for(let i=0;i<3;i++){let d=document.createElement('div');d.className='totem';d.textContent=S.totems[i]||'EMPTY';totems.appendChild(d)}}
-function bump(id){let e=$(id);e.classList.remove('bounce');void e.offsetWidth;e.classList.add('bounce')}async function add(k,n,m){msg.textContent=m;await wait(650);S[k]+=n;bump(k);bump('total');render();await wait(500)}
-function toggleHold(){
- if(S.busy)return;
- let limit=S.holdLimit+tb('hold');
- for(let c of S.board){
-   if(!S.sel.has(c.u))continue;
-   if(S.held.has(c.u))S.held.delete(c.u);
-   else if(S.held.size<limit)S.held.add(c.u);
+function bump(id){let e=$(id);e.classList.remove('bounce');void e.offsetWidth;e.classList.add('bounce')}
+async function addBase(n,m){msg.textContent=m;await wait(600);S.base+=n;bump('base');bump('total');render();await wait(450)}
+function holdSelected(){if(S.busy)return;let lim=1+tb('hold');for(let c of S.board){if(!S.sel.has(c.u))continue;if(S.held.has(c.u))S.held.delete(c.u);else if(S.held.size<lim)S.held.add(c.u)}S.sel.clear();render()}
+function pairKey(a,b){return [a.u,b.u].sort().join('|')}
+async function resolvePairs(){
+let by={};S.board.forEach(c=>(by[c.id]??=[]).push(c));
+for(let arr of Object.values(by)){
+ for(let i=0;i<arr.length;i++)for(let j=i+1;j<arr.length;j++){
+  let k=pairKey(arr[i],arr[j]);if(S.pairPaid.has(k))continue;
+  // each physical board card can only be consumed by one pair payout at a time
+  let used=new Set();for(let pk of S.pairPaid){let q=pk.split('|');used.add(q[0]);used.add(q[1])}
+  if(used.has(arr[i].u)||used.has(arr[j].u))continue;
+  S.pairPaid.add(k);render();[arr[i],arr[j]].forEach(c=>{let e=document.querySelector(`[data-u="${c.u}"]`);if(e)e.classList.add('pair')});
+  await wait(650);await addBase(1+tb('pair'),'PAIR! → +'+(1+tb('pair'))+' BASE');
  }
- S.sel.clear();render();
-}
+}}
 async function doDraw(){
- if(S.busy||S.draws<=0)return;
- S.busy=true;S.draws--;S.sel.clear();
-
- // Any board card not explicitly held returns to the live deck.
- let returning=S.board.filter(c=>!S.held.has(c.u));
- let heldCards=S.board.filter(c=>S.held.has(c.u));
- returning.forEach(c=>S.pile.push({deckIndex:c.deckIndex,id:c.id,mod:c.mod,stacks:c.stacks}));
- S.board=heldCards;
- S.board.forEach(c=>c.fresh=false);
-
- // Re-shuffle returned cards with the remaining live deck.
- S.pile=sh(S.pile);
-
- // Normal hand refills to 3 including held cards.
- let need=Math.max(0,3-S.board.length);
- let fresh=[];
- for(let z=0;z<need&&S.pile.length;z++){
-   let src=S.pile.shift();
-   let c={...src,u:uid(),fresh:true,pairUsed:false};
-   S.board.push(c);fresh.push(c);render();
-   msg.textContent='Drew '+I[c.id][0];await wait(450);
- }
- if(fresh.length)await add('base',fresh.reduce((a,c)=>a+v(c),0),'NEW CARDS → BASE NUGGETS');
-
- // Quick modifiers draw extra cards beyond normal hand size.
- for(let c of [...fresh]){
-   if(c.mod==='extra'&&c.stacks>0){
-     for(let z=0;z<c.stacks&&S.pile.length;z++){
-       msg.textContent=`${I[c.id][0]} QUICK ×${c.stacks} — extra draw!`;await wait(650);
-       let src=S.pile.shift(),ec={...src,u:uid(),fresh:true,pairUsed:false};
-       S.board.push(ec);fresh.push(ec);render();await wait(450);
-       await add('base',v(ec),`${I[ec.id][0]} EXTRA DRAW → +${v(ec)} BASE`);
-     }
-   }
- }
-
- // Pair bonus: only newly formed unused pairs pay out once while on board.
- let by={};S.board.forEach(c=>(by[c.id]??=[]).push(c));
- for(let a of Object.values(by)){
-   let available=a.filter(c=>!c.pairUsed);
-   while(available.length>=2){
-     let pair=available.splice(0,2);pair.forEach(c=>c.pairUsed=true);render();
-     pair.forEach(c=>{let e=document.querySelector(`[data-u="${c.u}"]`);if(e)e.classList.add('pair')});
-     await wait(700);await add('base',1+tb('pair'),'PAIR! → +'+(1+tb('pair'))+' BASE');
-   }
- }
- S.busy=false;
- msg.textContent='Select cards to HOLD, submit a scoring group, or DRAW again.';
- render();endCheck();
+if(S.busy||S.draws<=0)return;S.busy=true;S.draws--;S.sel.clear();
+let kept=S.board.filter(c=>S.held.has(c.u));let returned=S.board.filter(c=>!S.held.has(c.u));
+returned.forEach(c=>S.live.push({...S.deck[c.di],di:c.di}));S.board=kept;S.board.forEach(c=>c.fresh=false);
+S.held.clear(); // hold lasts through exactly this draw; player must re-hold afterward
+S.live=sh(S.live);
+let fresh=[];
+for(let z=0;z<3&&S.live.length;z++){let src=S.live.shift(),c={...src,u:uid(),fresh:true};S.board.push(c);fresh.push(c);render();msg.textContent='Drew '+I[c.id][0];await wait(430)}
+if(fresh.length)await addBase(fresh.reduce((a,c)=>a+val(c),0),'NEW CARDS → +'+fresh.reduce((a,c)=>a+val(c),0)+' BASE');
+for(let c of [...fresh])if(c.mod==='quick')for(let q=0;q<c.stacks&&S.live.length;q++){msg.textContent=I[c.id][0]+' QUICK → EXTRA CARD';await wait(600);let src=S.live.shift(),e={...src,u:uid(),fresh:true};S.board.push(e);fresh.push(e);render();await wait(400);await addBase(val(e),'EXTRA CARD → +'+val(e)+' BASE')}
+await resolvePairs();S.busy=false;msg.textContent='Hold cards, submit a score, or draw again.';render();checkState()
 }
-async function doSubmit(){let g=group();if(!g)return;S.busy=true;if(g[2]=='types'){
- msg.textContent=g[0]+'! → +'+g[1].toFixed(2)+'× MULTIPLIER';
- await wait(650);S.mult+=g[1];bump('bonus');bump('total');render();await wait(500);
-}else{
- await add('base',g[1],g[0]+'! → +'+g[1]+' BASE');
-}if(g[2]=='items')S.itemHits++;if(g[2]=='types')S.typeHits++;let ids=new Set(S.sel);for(let c of S.board.filter(x=>ids.has(x.u))){S.held.delete(c.u);S.discard.push(c);S.board=S.board.filter(x=>x.u!=c.u);render();await wait(190)}S.sel.clear();S.busy=false;msg.textContent='Scored cards discarded. Score again or DRAW 3.';render();endCheck()}
-function hasAnyBonusGroup(){
- if(S.board.length<3)return false;
- return new Set(S.board.map(c=>c.id)).size>=3;
+async function doSubmit(){
+let g=group();if(!g||S.busy)return;S.busy=true;if(g[2]==='types'){msg.textContent=g[0]+' → +'+g[1].toFixed(2)+'×';await wait(600);S.mult+=g[1];S.typeHits++;bump('mult');bump('total');render();await wait(450)}else{S.itemHits++;await addBase(g[1],g[0]+' → +'+g[1]+' BASE')}
+let ids=new Set(S.sel);for(let c of [...S.board])if(ids.has(c.u)){S.held.delete(c.u);S.discard.push(c);S.board=S.board.filter(x=>x.u!==c.u);render();await wait(170)}
+S.sel.clear();S.busy=false;msg.textContent='Scored cards discarded.';render();checkState()
 }
-function endCheck(){
- if(!S.active)return;
- if(Math.floor(S.base*S.mult)>=S.target){
-   msg.textContent='TARGET CLEARED! You may still submit remaining bonus groups, then COMPLETE ROUND.';
-   draw.textContent='COMPLETE ROUND';
-   draw.disabled=S.busy;
-   draw.onclick=completeRound;
-   return;
- }
- if(S.draws<=0){
-   draw.disabled=true;
-   if(hasAnyBonusGroup()){
-     msg.textContent='NO DRAWS LEFT — submit any remaining bonus groups.';
-   }else{
-     S.active=false;
-     msg.textContent='ROUND FAILED — no Draws and no remaining bonus groups.';
-   }
- }
+function anyGroup(){if(S.board.length<3)return false;return new Set(S.board.map(c=>c.id)).size>=3}
+function checkState(){if(!S.active)return;if(score()>=S.target){msg.textContent='TARGET CLEARED! Finish any scoring you want, then COMPLETE ROUND.';draw.textContent='COMPLETE ROUND';draw.disabled=S.busy;draw.onclick=completeRound}else if(S.draws<=0){draw.disabled=true;if(anyGroup())msg.textContent='NO DRAWS LEFT — submit remaining scoring groups.';else msg.textContent='ROUND FAILED — no draws or scoring groups left.'}}
+function completeRound(){if(S.busy||score()<S.target)return;S.active=false;let earned=3+S.draws+S.itemHits+2*S.typeHits;S.points+=earned;S.earned=earned;msg.textContent='ROUND COMPLETE! +'+earned+' POINTS';render();setTimeout(openShop,800)}
+function shopSummary(){storePoints.innerHTML='POINTS OWNED: <b>'+S.points+'</b>';summary.innerHTML=`Round reward: 3 base + ${S.draws} unused Draw + ${S.itemHits} Different Item + ${2*S.typeHits} Different Type = <b>${S.earned||0} Points</b>`}
+async function buildShop(newRound=false){
+let frozenOffer=(S.frozen!==null&&S.shopOffers[S.frozen])?S.shopOffers[S.frozen]:null;
+if(newRound||!S.shopOffers.length){let pool=sh(U.filter(o=>!frozenOffer||o.name!==frozenOffer.name));S.shopOffers=frozenOffer?[frozenOffer,...pool.slice(0,2)]:pool.slice(0,3);S.frozen=frozenOffer?0:null}
+offers.innerHTML='';
+S.shopOffers.forEach((o,i)=>{let d=document.createElement('div');d.className='offer';d.innerHTML=`<small><b>${o.label}</b></small><h3>${o.name}</h3><p>${o.desc}</p><b>${o.cost} Points</b><br><button class=buy>BUY</button><br><button class="freeze ${S.frozen===i?'on':''}">${S.frozen===i?'FROZEN':'FREEZE'}</button>`;d.querySelector('.buy').onclick=()=>buy(o,d);d.querySelector('.freeze').onclick=()=>{S.frozen=S.frozen===i?null:i;buildShop(false)};offers.appendChild(d)});
+for(let i=0;i<offers.children.length;i++){spin.textContent='SPINNING...';await wait(300);offers.children[i].classList.add('show');await wait(300)}spin.textContent=S.frozen!==null?'One offer is frozen for the next Merchant.':'Buy, freeze one, or reroll.'
 }
-function completeRound(){
- if(S.busy||Math.floor(S.base*S.mult)<S.target)return;
- S.active=false;
- let e=3+S.draws+S.itemHits+(2*S.typeHits);
- S.points+=e; S.earned=e;
- msg.textContent='ROUND COMPLETE! +'+e+' POINTS';
- render();
- setTimeout(openShop,900);
-}
-async function reveal(force=false){
- let oldFrozen=(S.frozen!==null&&S.shopOffers[S.frozen])?S.shopOffers[S.frozen]:null;
- if(force||!S.shopOffers.length){
-   let fresh=sh(U).filter(o=>!oldFrozen||o[0]!==oldFrozen[0]).slice(0,oldFrozen?2:3);
-   S.shopOffers=oldFrozen?[oldFrozen,...fresh]:fresh;
-   S.frozen=oldFrozen?0:null;
- }
- offers.innerHTML='';
- S.shopOffers.forEach((o,i)=>{
-   let d=document.createElement('div');d.className='offer';
-   d.innerHTML=`<div style="font-size:11px;font-weight:bold">${o[1]}</div><h3>${o[0]}</h3><p>${o[2]}</p><b>${o[5]} Points</b><br><button>BUY</button><br><button class="freeze" style="margin-top:6px;background:${S.frozen===i?'#3f8fe8':'#735a3c'}">${S.frozen===i?'FROZEN':'FREEZE'}</button>`;
-   d.querySelector('button').onclick=()=>buy(o,d);
-   d.querySelector('.freeze').onclick=()=>{S.frozen=S.frozen===i?null:i;reveal(false)};
-   offers.appendChild(d)
- });
- for(let i=0;i<S.shopOffers.length;i++){spin.textContent='SPINNING...';await wait(450);offers.children[i].classList.add('show');await wait(400)}
- spin.textContent=S.frozen!==null?'One offer frozen for next shop.':'Buy, freeze one, or reroll.';
-}
-function openShop(){shop.classList.add('on');shopSummary();reveal(true)}
-function buy(o,d){
- let [name,label,desc,category,effect,cost,resourceCost]=o;
- if(S.points<cost)return alert('Not enough Points');
-
- if(category==='modifier'){
-   S.points-=cost;
-   S.ownedMods.push({kind:effect,resourceCost});
- }
- else if(category==='totem'){
-   if(S.totems.length>=3){
-     let n=prompt('Replace Totem 1, 2, or 3?');
-     let i=+n-1;if(i<0||i>2)return;
-     S.points-=cost;S.totems[i]=effect;
-   }else{
-     S.points-=cost;S.totems.push(effect);
-   }
- }
- else if(category==='permanent'){
-   S.points-=cost;
-   if(effect==='draw')S.drawMod++;
-   if(effect==='slot')S.deck.push({id:sh(Object.keys(I))[0],mod:null,stacks:0});
- }
- d.style.opacity=.35;d.querySelector('button').disabled=true;render();shopSummary()
-}
-function nextRound(){shop.classList.remove('on');S.round++;S.target=[9,14,20,28,38][S.round-1]||Math.ceil(S.target*1.4);S.base=0;S.mult=1;S.draws=2+S.drawMod;S.pile=sh(S.deck.map((c,i)=>({deckIndex:i,...c})));S.board=[];S.discard=[];S.sel.clear();S.held.clear();S.active=true;S.itemHits=0;S.typeHits=0;S.rerolls=0;reroll.textContent='REROLL — 1 POINT';draw.textContent='DRAW 3';draw.onclick=doDraw;msg.textContent='Next round ready.';render()}
-function openDeckManager(){
- if(S.active&&(S.base>0||S.mult>1||S.board.length)){alert('Finish the current round before editing your deck.');return}
- deckedit.innerHTML='';
- if(!S.inventory)S.inventory=Object.fromEntries(Object.keys(I).map(k=>[k,20]));
- resourceCounts.textContent='Resources: '+Object.keys(I).map(k=>I[k][0]+' '+S.inventory[k]).join(' · ');
-
- S.deck.forEach((card,idx)=>{
-   let row=document.createElement('div');
-   row.style='background:#34291c;padding:8px;margin:7px 0;border:2px solid #17130e';
-   let top=document.createElement('div');
-   top.style='display:flex;gap:8px;align-items:center';
-   let label=document.createElement('b');label.textContent='Slot '+(idx+1);top.appendChild(label);
-
-   let sel=document.createElement('select');sel.style='flex:1;padding:8px;font:inherit';
-   Object.keys(I).forEach(k=>{
-     let o=document.createElement('option');o.value=k;o.textContent=I[k][0]+' — '+I[k][1]+' — '+I[k][3]+'N';
-     if(k===card.id)o.selected=true;sel.appendChild(o)
-   });
-   sel.onchange=()=>{S.deck[idx]={id:sel.value,mod:null,stacks:0};};
-   top.appendChild(sel);row.appendChild(top);
-
-   let mod=document.createElement('div');
-   mod.style='margin-top:6px;font-size:12px;color:#ffe8a6';
-   mod.textContent=card.mod?`Modifier: ${card.mod==='plus1'?'+1 Nugget':'Quick'} ×${card.stacks}`:'Modifier: None';
-   row.appendChild(mod);
-
-   if(S.ownedMods.length){
-     let applyWrap=document.createElement('div');applyWrap.style='display:flex;gap:6px;margin-top:7px;flex-wrap:wrap';
-     let msel=document.createElement('select');msel.style='padding:7px';
-     S.ownedMods.forEach((m,mi)=>{
-       let o=document.createElement('option');o.value=mi;
-       o.textContent=(m.kind==='plus1'?'+1 Nugget':'Quick')+` — costs ${m.resourceCost} ${I[card.id][0]}`;
-       msel.appendChild(o)
-     });
-     let btn=document.createElement('button');btn.textContent='APPLY MODIFIER';btn.style='background:#914cc5';
-     btn.onclick=()=>{
-       let mi=+msel.value,m=S.ownedMods[mi];
-       if(card.mod&&card.mod!==m.kind){alert('This card already has a different modifier type. Only the same modifier can stack.');return}
-       if((S.inventory?.[card.id]??20)<m.resourceCost){alert('Not enough resource copies.');return}
-       if(!S.inventory)S.inventory=Object.fromEntries(Object.keys(I).map(k=>[k,20]));
-       S.inventory[card.id]-=m.resourceCost;
-       card.mod=m.kind;card.stacks++;
-       S.ownedMods.splice(mi,1);
-       openDeckManager();render();
-     };
-     applyWrap.appendChild(msel);applyWrap.appendChild(btn);row.appendChild(applyWrap);
-   }
-   deckedit.appendChild(row);
- });
- deckm.classList.add('on');
-}
-deckbtn.onclick=openDeckManager;
-draw.onclick=doDraw;holdbtn.onclick=toggleHold;submit.onclick=doSubmit;disc.onclick=()=>{dl.innerHTML=S.discard.map(c=>`<div class=card><div class=ico>${I[c.id][2]}</div><div class=name>${I[c.id][0]}</div></div>`).join('');dm.classList.add('on')};reroll.onclick=async()=>{let c=S.rerolls+1;if(S.points<c)return alert('Not enough Points');S.points-=c;S.rerolls++;reroll.textContent=`REROLL — ${S.rerolls+1} POINTS`;render();shopSummary();await reveal(true)};next.onclick=nextRound;S.pile=sh(S.deck.map((c,i)=>({deckIndex:i,...c})));render();
+function openShop(){shop.classList.add('on');shopSummary();buildShop(true)}
+function buy(o,d){if(S.points<o.cost)return alert('Not enough Points');if(o.cat==='totem'&&S.totems.length>=3)return alert('Totem slots full in this prototype.');S.points-=o.cost;if(o.cat==='totem')S.totems.push(o.effect);if(o.cat==='mod')S.ownedMods.push({kind:o.effect,res:o.res});if(o.cat==='perm'&&o.effect==='draw')S.drawMod++;if(o.cat==='perm'&&o.effect==='slot')S.deck.push({id:sh(Object.keys(I))[0],mod:null,stacks:0,key:uid()});d.style.opacity=.4;d.querySelector('.buy').disabled=true;render();shopSummary()}
+function nextRound(){shop.classList.remove('on');S.round++;S.target=[9,15,24,36,52][S.round-1]||Math.ceil(S.target*1.4);S.base=0;S.mult=1;S.draws=2+S.drawMod;S.board=[];S.discard=[];S.sel.clear();S.held.clear();S.pairPaid.clear();S.active=true;S.busy=false;S.itemHits=S.typeHits=0;S.rerolls=0;S.live=sh(S.deck.map((c,i)=>({...c,di:i})));draw.textContent='DRAW 3';draw.onclick=doDraw;reroll.textContent='REROLL — 1 POINT';msg.textContent='Next round ready.';render()}
+function openDeck(){if(S.active&&(S.base>0||S.board.length))return alert('Finish the current round before editing your deck.');resources.textContent='Resources: '+Object.keys(I).map(k=>I[k][0]+' '+S.inventory[k]).join(' · ');deckedit.innerHTML='';S.deck.forEach((c,i)=>{let d=document.createElement('div');d.className='dmrow';let sel=document.createElement('select');Object.keys(I).forEach(k=>{let o=document.createElement('option');o.value=k;o.textContent=I[k][0]+' — '+I[k][1]+' — '+I[k][3]+'N';o.selected=k===c.id;sel.appendChild(o)});sel.onchange=()=>{c.id=sel.value;c.mod=null;c.stacks=0};d.innerHTML='<b>Slot '+(i+1)+'</b> ';d.appendChild(sel);let m=document.createElement('div');m.className='modtag';m.textContent=c.mod?'Modifier: '+c.mod+' ×'+c.stacks:'Modifier: None';d.appendChild(m);if(S.ownedMods.length){let ms=document.createElement('select');S.ownedMods.forEach((x,j)=>{let o=document.createElement('option');o.value=j;o.textContent=(x.kind==='plus1'?'+1 Nugget':'Quick')+' / costs '+x.res+' '+I[c.id][0];ms.appendChild(o)});let b=document.createElement('button');b.textContent='APPLY';b.style.background='#914cc5';b.onclick=()=>{let j=+ms.value,x=S.ownedMods[j];if(c.mod&&c.mod!==x.kind)return alert('Only the same modifier family can stack.');if(S.inventory[c.id]<x.res)return alert('Not enough resources.');S.inventory[c.id]-=x.res;c.mod=x.kind;c.stacks++;S.ownedMods.splice(j,1);openDeck()};d.appendChild(document.createElement('br'));d.appendChild(ms);d.appendChild(b)}deckedit.appendChild(d)});deckm.classList.add('on')}
+draw.onclick=doDraw;hold.onclick=holdSelected;submit.onclick=doSubmit;deckbtn.onclick=openDeck;disc.onclick=()=>{dl.innerHTML=S.discard.map(c=>`<div class=card><div class=ico>${I[c.id][2]}</div><div class=name>${I[c.id][0]}</div></div>`).join('');dm.classList.add('on')};next.onclick=nextRound;reroll.onclick=async()=>{let cost=S.rerolls+1;if(S.points<cost)return alert('Not enough Points');S.points-=cost;S.rerolls++;reroll.textContent=`REROLL — ${S.rerolls+1} POINTS`;let frozen=S.frozen!==null?S.shopOffers[S.frozen]:null,pool=sh(U.filter(o=>!frozen||o.name!==frozen.name));S.shopOffers=frozen?[frozen,...pool.slice(0,2)]:pool.slice(0,3);S.frozen=frozen?0:null;shopSummary();await buildShop(false)};
+S.live=sh(S.deck.map((c,i)=>({...c,di:i})));render();
 </script></body></html>
