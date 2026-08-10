@@ -2,8 +2,8 @@
 <style>
 *{box-sizing:border-box}body{margin:0;background:#5b914e;font-family:monospace;color:#fff}button{font:inherit;font-weight:bold;color:#fff;border:3px solid #17130e;border-radius:5px;padding:11px;background:#438ed8;box-shadow:0 4px #17130e}button:disabled{opacity:.4}.w{max-width:900px;margin:auto;padding:8px}.p{background:#604b2f;border:4px solid #21190f;box-shadow:inset 0 0 0 3px #96784e;padding:9px;margin-bottom:8px}.top{display:grid;grid-template-columns:1fr 1fr;gap:8px}.target{text-align:center;background:#282117;padding:7px}.target b{font-size:30px;color:#ffd15c}.score{display:flex;align-items:center;justify-content:center;gap:6px;margin:8px}.n{font-size:28px;font-weight:bold;padding:5px 10px;border:3px solid #18130d;min-width:60px;text-align:center}.base{background:#eee;color:#111}.bonus{background:#914cc5}.total{font-size:34px;color:#79ef6d}.bounce{animation:b .4s}.stats{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}.stat{background:#2c241a;padding:6px;border:2px solid #17130e}.totems{display:flex;gap:5px;justify-content:center}.totem{background:#4a3563;border:3px solid #17130e;padding:8px;min-width:80px;text-align:center}.msg{text-align:center;min-height:46px;padding:10px;font-weight:bold;font-size:16px;color:#fff1b7}.board{min-height:170px;display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap}.card{width:105px;height:132px;background:#ddcca5;color:#241a0e;border:4px solid #21180e;box-shadow:inset 0 0 0 3px #f4e8c9,5px 5px #21180e88;padding:7px;position:relative;text-align:center}.card.sel{transform:translateY(-9px);outline:5px solid #fff36a}.card.pair{animation:f .55s 2}.ico{font-size:29px}.name{font-weight:bold;margin-top:7px}.type{font-size:10px}.val{position:absolute;right:6px;bottom:4px;font-size:18px;font-weight:bold}.new{position:absolute;right:3px;top:3px;background:#3989df;color:white;font-size:8px;padding:2px}.actions{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}.submit{background:#914cc5}.discard{background:#735a3c}.merchant{background:#e09632}.row{display:flex;gap:8px;margin-top:8px}.pile{flex:1;text-align:center;background:#34291c;border:3px solid #17130e;padding:7px}.modal{display:none;position:fixed;inset:0;background:#000c;z-index:9;padding:12px;overflow:auto}.modal.on{display:flex;align-items:center;justify-content:center}.box{width:min(680px,100%);background:#604b2f;border:5px solid #17130e;padding:12px}.offers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.offer{background:#e2d0a4;color:#21180e;border:4px solid #17130e;padding:8px;text-align:center;opacity:0;transform:scale(.3)}.offer.show{animation:r .55s forwards}.offer button{background:#4e9c4c}.reroll{background:#914cc5}.close{background:#555}@keyframes b{50%{transform:scale(1.35)}}@keyframes f{50%{outline:6px solid #ffd84f;transform:scale(1.08)}}@keyframes r{to{opacity:1;transform:none}}@media(max-width:600px){.top{grid-template-columns:1fr}.card{width:92px;height:120px}.offers{grid-template-columns:1fr}.n{font-size:23px}.total{font-size:29px}}
 </style></head><body><div class="w">
-<div class="top"><div class="p"><div class="target">ROUND <span id="round">1</span><br>Target <b id="target">9</b></div><div class="score"><span id="base" class="n base">0</span>+<span id="bonus" class="n bonus">0</span>=<span id="total" class="total">0</span></div><div class="stats"><span class="stat">Draws <b id="draws">2</b></span><span class="stat">Points <b id="points">0</b></span><span class="stat">Deck <b id="deckn">6</b></span></div></div><div class="p"><b>TOTEMS</b><div id="totems" class="totems"></div></div></div>
-<div class="p"><div id="msg" class="msg">Press DRAW to begin.</div><div id="board" class="board"></div><div class="actions"><button id="draw">DRAW 3</button><button id="submit" class="submit" disabled>SUBMIT BONUS</button><button id="disc" class="discard">DISCARD (<span id="discn">0</span>)</button><button id="deckbtn" class="merchant">DECK MANAGER</button></div><div class="row"><div class="pile">Draw pile<br><b id="pilen">6</b></div><div class="pile">Selected<br><b id="preview">—</b></div></div></div></div>
+<div class="top"><div class="p"><div class="target">ROUND <span id="round">1</span><br>Target <b id="target">9</b></div><div style="text-align:center;font-size:10px;margin-top:7px">BASE &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MULTIPLIER &nbsp;&nbsp;&nbsp;&nbsp; TOTAL</div><div class="score"><span id="base" class="n base">0</span>×<span id="bonus" class="n bonus">1×</span>=<span id="total" class="total">0</span></div><div class="stats"><span class="stat">Draws <b id="draws">2</b></span><span class="stat">Points <b id="points">0</b></span><span class="stat">Deck <b id="deckn">6</b></span></div></div><div class="p"><b>TOTEMS</b><div id="totems" class="totems"></div></div></div>
+<div class="p"><div id="msg" class="msg">Press DRAW to begin.</div><div id="board" class="board"></div><div class="actions"><button id="draw">DRAW 3</button><button id="submit" class="submit" disabled>SUBMIT BONUS</button><button id="disc" class="discard">DISCARD (<span id="discn">0</span>)</button><button id="deckbtn" class="merchant">DECK MANAGER</button></div><div class="row"><div class="pile">Draw pile<br><b id="pilen">6</b></div><div class="pile">Selected Score<br><b id="preview">—</b></div></div></div></div>
 <div id="dm" class="modal"><div class="box"><h2>Discard Pile</h2><div id="dl" class="board"></div><button class="close" onclick="dm.classList.remove('on')">CLOSE</button></div></div>
 <div id="deckm" class="modal"><div class="box"><h2>DECK MANAGER</h2><p>Choose the exact cards in your unlocked slots. Bought Card Modifiers are applied here by spending copies of that card's resource.</p><div id="resourceCounts" style="margin:8px 0;color:#ffd85b"></div><div id="deckedit"></div><button class="close" onclick="deckm.classList.remove('on')">DONE</button></div></div>
 <div id="shop" class="modal"><div class="box"><h2>MERCHANT</h2><div id="summary"></div><div id="spin" class="msg">SPINNING...</div><div id="offers" class="offers"></div><div class="actions" style="margin-top:10px"><button id="reroll" class="reroll">REROLL — 1 POINT</button><button id="next" class="close">NEXT ROUND</button></div></div></div>
@@ -13,13 +13,13 @@ const U=[
 ['Polished','Card Modifier','This card gets +1 Base Nugget.','modifier','plus1',4,4],
 ['Quick','Card Modifier','When this card is drawn, draw 1 extra card.','modifier','extra',5,5],
 ['Builder Totem','Totem','Pairs give +1 more bonus.','totem','pair',4,0],
-['Collector Totem','Totem','Different Items gives +2 more.','totem','items',5,0],
-['Explorer Totem','Totem','Different Types gives +3 more.','totem','types',6,0],
+['Collector Totem','Totem','Different Items gives +2 Base.','totem','items',5,0],
+['Explorer Totem','Totem','Different Types gives +0.25× Multiplier.','totem','types',6,0],
 ['Prospector Totem','Totem','All Ore cards get +1 Base Nugget.','totem','oreTotem',7,0],
 ['Extra Draw','Permanent','+1 Draw each round.','permanent','draw',5,0],
 ['Open Slot','Permanent','Add one random new card slot to your deck.','permanent','slot',3,0]
 ];
-let S={round:1,target:9,base:0,bonus:0,points:0,draws:2,deck:[{id:'plank',mod:null,stacks:0},{id:'plank',mod:null,stacks:0},{id:'iron',mod:null,stacks:0},{id:'gold',mod:null,stacks:0},{id:'bone',mod:null,stacks:0},{id:'leather',mod:null,stacks:0}],pile:[],board:[],discard:[],sel:new Set(),totems:[],ownedMods:[],drawMod:0,active:true,itemHits:0,typeHits:0,rerolls:0,busy:false};
+let S={round:1,target:9,base:0,mult:1,points:0,draws:2,deck:[{id:'plank',mod:null,stacks:0},{id:'plank',mod:null,stacks:0},{id:'iron',mod:null,stacks:0},{id:'gold',mod:null,stacks:0},{id:'bone',mod:null,stacks:0},{id:'leather',mod:null,stacks:0}],pile:[],board:[],discard:[],sel:new Set(),totems:[],ownedMods:[],drawMod:0,active:true,itemHits:0,typeHits:0,rerolls:0,busy:false};
 const $=x=>document.getElementById(x),wait=n=>new Promise(r=>setTimeout(r,n)),sh=a=>[...a].sort(()=>Math.random()-.5),uid=()=>Math.random().toString(36).slice(2);
 function v(c){
  let n=I[c.id][3];
@@ -27,8 +27,20 @@ function v(c){
  if(I[c.id][1]=='Ore'&&S.totems.includes('oreTotem'))n+=1;
  return n
 }function tb(x){return S.totems.filter(t=>t==x).length}
-function group(){let c=S.board.filter(x=>S.sel.has(x.u));if(c.length<3)return null;let ni=new Set(c.map(x=>x.id)).size,nt=new Set(c.map(x=>I[x.id][1])).size;if(nt==c.length)return['DIFFERENT TYPES',6+3*tb('types'),'types'];if(ni==c.length)return['DIFFERENT ITEMS',3+2*tb('items'),'items'];return null}
-function render(){round.textContent=S.round;target.textContent=S.target;base.textContent=S.base;bonus.textContent=S.bonus;total.textContent=S.base+S.bonus;draws.textContent=S.draws;points.textContent=S.points;deckn.textContent=S.deck.length;pilen.textContent=S.pile.length;discn.textContent=S.discard.length;board.innerHTML='';S.board.forEach(c=>{let x=I[c.id],d=document.createElement('div');d.className='card'+(S.sel.has(c.u)?' sel':'');d.dataset.u=c.u;d.innerHTML=`${c.fresh?'<i class="new">NEW</i>':''}<div class=ico>${x[2]}</div><div class=name>${x[0]}</div><div class=type>${x[1]}</div><div class=val>${v(c)}N</div>`;d.onclick=()=>{if(S.busy)return;S.sel.has(c.u)?S.sel.delete(c.u):S.sel.add(c.u);render()};board.appendChild(d)});let g=group();preview.textContent=g?g[0]+' +'+g[1]:'—';submit.disabled=S.busy||!g;draw.disabled=S.busy||S.draws<=0||S.pile.length==0;totems.innerHTML='';for(let i=0;i<3;i++){let d=document.createElement('div');d.className='totem';d.textContent=S.totems[i]||'EMPTY';totems.appendChild(d)}}
+function group(){
+ let c=S.board.filter(x=>S.sel.has(x.u));if(c.length<3)return null;
+ let ni=new Set(c.map(x=>x.id)).size,nt=new Set(c.map(x=>I[x.id][1])).size;
+ if(nt>=3&&ni>=3){
+   let extra=Math.max(0,nt-3);
+   return['DIFFERENT TYPES',0.5+extra*0.25+0.25*tb('types'),'types'];
+ }
+ if(ni>=3){
+   let extra=Math.max(0,ni-3);
+   return['DIFFERENT ITEMS',3+extra+2*tb('items'),'items'];
+ }
+ return null
+}
+function render(){round.textContent=S.round;target.textContent=S.target;base.textContent=S.base;bonus.textContent=S.mult.toFixed(1)+'×';total.textContent=Math.floor(S.base*S.mult);draws.textContent=S.draws;points.textContent=S.points;deckn.textContent=S.deck.length;pilen.textContent=S.pile.length;discn.textContent=S.discard.length;board.innerHTML='';S.board.forEach(c=>{let x=I[c.id],d=document.createElement('div');d.className='card'+(S.sel.has(c.u)?' sel':'');d.dataset.u=c.u;d.innerHTML=`${c.fresh?'<i class="new">NEW</i>':''}<div class=ico>${x[2]}</div><div class=name>${x[0]}</div><div class=type>${x[1]}</div><div class=val>${v(c)}N</div>`;d.onclick=()=>{if(S.busy)return;S.sel.has(c.u)?S.sel.delete(c.u):S.sel.add(c.u);render()};board.appendChild(d)});let g=group();preview.textContent=g?(g[0]+(g[2]=='types'?' +'+g[1].toFixed(2)+'×':' +'+g[1]+' Base')):'—';submit.disabled=S.busy||!g;draw.disabled=S.busy||S.draws<=0||S.pile.length==0;totems.innerHTML='';for(let i=0;i<3;i++){let d=document.createElement('div');d.className='totem';d.textContent=S.totems[i]||'EMPTY';totems.appendChild(d)}}
 function bump(id){let e=$(id);e.classList.remove('bounce');void e.offsetWidth;e.classList.add('bounce')}async function add(k,n,m){msg.textContent=m;await wait(650);S[k]+=n;bump(k);bump('total');render();await wait(500)}
 async function doDraw(){if(S.busy)return;S.busy=true;S.draws--;S.board.forEach(c=>c.fresh=false);S.sel.clear();render();let fresh=[];for(let z=0;z<3&&S.pile.length;z++){let src=S.pile.shift();let c={...src,u:uid(),fresh:true,pairUsed:false};S.board.push(c);fresh.push(c);render();msg.textContent='Drew '+I[c.id][0];await wait(450)}await add('base',fresh.reduce((a,c)=>a+v(c),0),'NEW CARDS → BASE NUGGETS');
 for(let c of [...fresh]){
@@ -53,19 +65,24 @@ for(let a of Object.values(by)){
     render();
     pair.forEach(c=>{let e=document.querySelector(`[data-u="${c.u}"]`);if(e)e.classList.add('pair')});
     await wait(700);
-    await add('bonus',1+tb('pair'),'PAIR! → BONUS');
+    await add('base',1+tb('pair'),'PAIR! → +'+(1+tb('pair'))+' BASE');
     pair.forEach(c=>{let e=document.querySelector(`[data-u="${c.u}"]`);if(e)e.classList.remove('pair')});
   }
 }
-S.busy=false;msg.textContent='Select a bonus group, submit it, or draw again.';render();endCheck()}
-async function doSubmit(){let g=group();if(!g)return;S.busy=true;await add('bonus',g[1],g[0]+'! → +'+g[1]);if(g[2]=='items')S.itemHits++;if(g[2]=='types')S.typeHits++;let ids=new Set(S.sel);for(let c of S.board.filter(x=>ids.has(x.u))){S.discard.push(c);S.board=S.board.filter(x=>x.u!=c.u);render();await wait(190)}S.sel.clear();S.busy=false;msg.textContent='Scored cards discarded. Score again or DRAW 3.';render();endCheck()}
+S.busy=false;msg.textContent='Select a scoring group, submit it, or draw again.';render();endCheck()}
+async function doSubmit(){let g=group();if(!g)return;S.busy=true;if(g[2]=='types'){
+ msg.textContent=g[0]+'! → +'+g[1].toFixed(2)+'× MULTIPLIER';
+ await wait(650);S.mult+=g[1];bump('bonus');bump('total');render();await wait(500);
+}else{
+ await add('base',g[1],g[0]+'! → +'+g[1]+' BASE');
+}if(g[2]=='items')S.itemHits++;if(g[2]=='types')S.typeHits++;let ids=new Set(S.sel);for(let c of S.board.filter(x=>ids.has(x.u))){S.discard.push(c);S.board=S.board.filter(x=>x.u!=c.u);render();await wait(190)}S.sel.clear();S.busy=false;msg.textContent='Scored cards discarded. Score again or DRAW 3.';render();endCheck()}
 function hasAnyBonusGroup(){
  if(S.board.length<3)return false;
  return new Set(S.board.map(c=>c.id)).size>=3;
 }
 function endCheck(){
  if(!S.active)return;
- if(S.base+S.bonus>=S.target){
+ if(Math.floor(S.base*S.mult)>=S.target){
    msg.textContent='TARGET CLEARED! You may still submit remaining bonus groups, then COMPLETE ROUND.';
    draw.textContent='COMPLETE ROUND';
    draw.disabled=S.busy;
@@ -83,7 +100,7 @@ function endCheck(){
  }
 }
 function completeRound(){
- if(S.busy||S.base+S.bonus<S.target)return;
+ if(S.busy||Math.floor(S.base*S.mult)<S.target)return;
  S.active=false;
  let e=3+S.draws+S.itemHits+(2*S.typeHits);
  S.points+=e; S.earned=e;
@@ -118,9 +135,9 @@ function buy(o,d){
  }
  d.style.opacity=.35;d.querySelector('button').disabled=true;render();shopSummary()
 }
-function nextRound(){shop.classList.remove('on');S.round++;S.target=[9,14,20,28,38][S.round-1]||Math.ceil(S.target*1.4);S.base=S.bonus=0;S.draws=2+S.drawMod;S.pile=sh(S.deck.map((c,i)=>({deckIndex:i,...c})));S.board=[];S.discard=[];S.sel.clear();S.active=true;S.itemHits=0;S.typeHits=0;S.rerolls=0;reroll.textContent='REROLL — 1 POINT';draw.textContent='DRAW 3';draw.onclick=doDraw;msg.textContent='Next round ready.';render()}
+function nextRound(){shop.classList.remove('on');S.round++;S.target=[9,14,20,28,38][S.round-1]||Math.ceil(S.target*1.4);S.base=0;S.mult=1;S.draws=2+S.drawMod;S.pile=sh(S.deck.map((c,i)=>({deckIndex:i,...c})));S.board=[];S.discard=[];S.sel.clear();S.active=true;S.itemHits=0;S.typeHits=0;S.rerolls=0;reroll.textContent='REROLL — 1 POINT';draw.textContent='DRAW 3';draw.onclick=doDraw;msg.textContent='Next round ready.';render()}
 function openDeckManager(){
- if(S.active&&(S.base>0||S.bonus>0||S.board.length)){alert('Finish the current round before editing your deck.');return}
+ if(S.active&&(S.base>0||S.mult>1||S.board.length)){alert('Finish the current round before editing your deck.');return}
  deckedit.innerHTML='';
  if(!S.inventory)S.inventory=Object.fromEntries(Object.keys(I).map(k=>[k,20]));
  resourceCounts.textContent='Resources: '+Object.keys(I).map(k=>I[k][0]+' '+S.inventory[k]).join(' · ');
