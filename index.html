@@ -12,10 +12,10 @@
 <div class="stats"><span class="stat">Draws <b id="draws">2</b></span><span class="stat">Points <b id="points">0</b></span><span class="stat">Deck <b id="deckn">6</b></span></div></div>
 <div class="p"><b>TOTEMS</b><div id="totems" class="totems"></div></div></div>
 <div class="p"><div id="msg" class="msg">Press DRAW 3 to begin.</div><div id="board" class="board"></div>
-<div class="actions"><button id="draw">DRAW 3</button><button id="hold" class="hold" disabled>HOLD (0/1)</button><button id="submit" class="submit" disabled>SUBMIT SCORE</button><button id="disc" class="discard">DISCARD (0)</button><button id="deckbtn" class="deck">DECK MANAGER</button></div>
+<div class="actions"><button id="draw">DRAW 3</button><button id="hold" class="hold" disabled>HOLD (0/1)</button><button id="submit" class="submit" disabled>SUBMIT SCORE</button><button id="disc" class="discard">SUBMITTED BONUS</button><button id="deckbtn" class="deck">DECK MANAGER</button></div>
 <div class="row"><div class="pile">Live deck<br><b id="pilen">6</b></div><div class="pile">Selected<br><b id="preview">—</b></div></div></div></div>
 
-<div id="dm" class="modal"><div class="box"><h2>Discard Pile</h2><div id="dl" class="board"></div><button class="close" onclick="dm.classList.remove('on')">CLOSE</button></div></div>
+<div id="dm" class="modal"><div class="box"><h2>Submitted Bonus</h2><div id="dl"></div><button class="close" onclick="dm.classList.remove('on')">CLOSE</button></div></div>
 <div id="deckm" class="modal"><div class="box"><h2>Deck Manager</h2><p>Edit only between rounds. Modifiers attach to one physical deck card.</p><div id="resources"></div><div id="deckedit"></div><button class="close" onclick="deckm.classList.remove('on')">DONE</button></div></div>
 <div id="shop" class="modal"><div class="box"><div id="storePoints" class="pointsSticky">POINTS OWNED: 0</div><h2>MERCHANT</h2><div id="summary"></div><div id="spin" class="msg"></div><div id="offers" class="offers"></div><div class="actions" style="margin-top:10px"><button id="reroll" class="reroll">REROLL — 1 POINT</button><button id="next" class="close">NEXT ROUND</button></div></div></div>
 
@@ -24,7 +24,7 @@ const I={plank:['Plank','Craft','🔧',1],stick:['Stick','Craft','🔧',1],iron:
 const U=[
 {name:'Polished',label:'CARD MODIFIER',desc:'+1 Base Nugget on this card.',cat:'mod',effect:'plus1',cost:4,res:4},
 {name:'Quick',label:'CARD MODIFIER',desc:'When drawn, draw +1 extra card.',cat:'mod',effect:'quick',cost:5,res:5},
-{name:'Builder Totem',label:'TOTEM',desc:'Pairs give +1 more Base.',cat:'totem',effect:'pair',cost:4},
+{name:'Cluster Totem',label:'TOTEM',desc:'Clusters give +1 more Base.',cat:'totem',effect:'pair',cost:4},
 {name:'Collector Totem',label:'TOTEM',desc:'Different Items gives +2 Base.',cat:'totem',effect:'items',cost:5},
 {name:'Explorer Totem',label:'TOTEM',desc:'Different Types gives +0.25×.',cat:'totem',effect:'types',cost:6},
 {name:'Prospector Totem',label:'TOTEM',desc:'All Ore cards +1 Base.',cat:'totem',effect:'ore',cost:7},
@@ -32,33 +32,35 @@ const U=[
 {name:'Extra Draw',label:'PERMANENT',desc:'+1 Draw each round.',cat:'perm',effect:'draw',cost:5},
 {name:'Open Slot',label:'PERMANENT',desc:'Add one deck slot.',cat:'perm',effect:'slot',cost:3}
 ];
-let S={round:1,target:9,base:0,mult:1,points:0,draws:2,deck:['plank','plank','iron','gold','bone','leather'].map((id,i)=>({id,mod:null,stacks:0,key:i+'a'})),live:[],board:[],discard:[],sel:new Set(),held:new Set(),pairPaid:new Set(),totems:[],ownedMods:[],inventory:Object.fromEntries(Object.keys(I).map(k=>[k,20])),drawMod:0,active:true,busy:false,itemHits:0,typeHits:0,shopOffers:[],frozen:null,rerolls:0};
+let S={round:1,target:9,base:0,mult:1,points:0,draws:2,deck:['plank','plank','iron','gold','bone','leather'].map((id,i)=>({id,mod:null,stacks:0,key:i+'a'})),live:[],board:[],discard:[],sel:new Set(),held:new Set(),clusterHits:0,totems:[],ownedMods:[],inventory:Object.fromEntries(Object.keys(I).map(k=>[k,20])),drawMod:0,active:true,busy:false,itemHits:0,typeHits:0,shopOffers:[],frozen:null,rerolls:0};
 const $=x=>document.getElementById(x),wait=n=>new Promise(r=>setTimeout(r,n)),sh=a=>{a=[...a];for(let i=a.length-1;i;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a},uid=()=>Math.random().toString(36).slice(2);
 function tb(x){return S.totems.filter(t=>t===x).length} function score(){return Math.floor(S.base*S.mult)}
 function val(c){let n=I[c.id][3]+(c.mod==='plus1'?c.stacks:0);if(I[c.id][1]==='Ore'&&S.totems.includes('ore'))n++;return n}
 function group(){let c=S.board.filter(x=>S.sel.has(x.u));if(c.length<3)return null;let ni=new Set(c.map(x=>x.id)).size,nt=new Set(c.map(x=>I[x.id][1])).size;if(nt>=3&&ni>=3)return['DIFFERENT TYPES',.5+Math.max(0,nt-3)*.25+.25*tb('types'),'types'];if(ni>=3)return['DIFFERENT ITEMS',3+Math.max(0,ni-3)+2*tb('items'),'items'];return null}
 function render(){
-round.textContent=S.round;target.textContent=S.target;base.textContent=S.base;mult.textContent=S.mult.toFixed(2)+'×';total.textContent=score();draws.textContent=S.draws;points.textContent=S.points;deckn.textContent=S.deck.length;pilen.textContent=S.live.length;disc.textContent='DISCARD ('+S.discard.length+')';
-board.innerHTML='';S.board.forEach(c=>{let x=I[c.id],d=document.createElement('div');d.className='card'+(S.sel.has(c.u)?' sel':'')+(S.held.has(c.u)?' held':'');d.dataset.u=c.u;d.innerHTML=`${S.held.has(c.u)?'<span class=lock>🔒 HOLD</span>':''}${c.fresh?'<span class=fresh>NEW</span>':''}<div class=ico>${x[2]}</div><div class=name>${x[0]}</div><div class=type>${x[1]}</div><div class=val>${val(c)}N</div>`;d.onclick=()=>{if(S.busy)return;S.sel.has(c.u)?S.sel.delete(c.u):S.sel.add(c.u);render()};board.appendChild(d)});
+round.textContent=S.round;target.textContent=S.target;base.textContent=S.base;mult.textContent=S.mult.toFixed(2)+'×';total.textContent=score();draws.textContent=S.draws;points.textContent=S.points;deckn.textContent=S.deck.length;pilen.textContent=S.live.length;disc.textContent='SUBMITTED BONUS';
+board.innerHTML='';S.board.forEach(c=>{let x=I[c.id],d=document.createElement('div');d.className='card'+(S.sel.has(c.u)?' sel':'')+(S.held.has(c.u)?' held':'');d.dataset.u=c.u;let badges='';
+if(c.mod==='plus1'&&c.stacks)badges+=`<span style="position:absolute;left:4px;bottom:4px;background:#4e9c4c;color:white;padding:2px 4px;font-size:10px">+${c.stacks}</span>`;
+if(c.mod==='quick'&&c.stacks)badges+=`<span style="position:absolute;left:4px;bottom:4px;background:#3f8fe8;color:white;padding:2px 4px;font-size:10px">&${c.stacks}</span>`;
+d.innerHTML=`${S.held.has(c.u)?'<span class=lock>🔒 HOLD</span>':''}${c.fresh?'<span class=fresh>NEW</span>':''}<div class=ico>${x[2]}</div><div class=name>${x[0]}</div><div class=type>${x[1]}</div>${badges}<div class=val>${val(c)}N</div>`;d.onclick=()=>{if(S.busy)return;S.sel.has(c.u)?S.sel.delete(c.u):S.sel.add(c.u);render()};board.appendChild(d)});
 let g=group();preview.textContent=g?(g[0]+' '+(g[2]==='types'?'+'+g[1].toFixed(2)+'×':'+'+g[1]+' Base')):'—';submit.disabled=S.busy||!g;let hl=1+tb('hold');hold.textContent=`HOLD (${S.held.size}/${hl})`;hold.disabled=S.busy||S.sel.size===0;draw.disabled=S.busy||S.draws<=0;
-totems.innerHTML='';let names={pair:'Builder',items:'Collector',types:'Explorer',ore:'Prospector',hold:'Hoarder'};for(let i=0;i<3;i++){let d=document.createElement('div');d.className='totem';d.textContent=S.totems[i]?names[S.totems[i]]:'EMPTY';totems.appendChild(d)}
+totems.innerHTML='';let names={pair:'Cluster',items:'Collector',types:'Explorer',ore:'Prospector',hold:'Hoarder'};for(let i=0;i<3;i++){let d=document.createElement('div');d.className='totem';d.textContent=S.totems[i]?names[S.totems[i]]:'EMPTY';totems.appendChild(d)}
 }
 function bump(id){let e=$(id);e.classList.remove('bounce');void e.offsetWidth;e.classList.add('bounce')}
 async function addBase(n,m){msg.textContent=m;await wait(600);S.base+=n;bump('base');bump('total');render();await wait(450)}
 function holdSelected(){if(S.busy)return;let lim=1+tb('hold');for(let c of S.board){if(!S.sel.has(c.u))continue;if(S.held.has(c.u))S.held.delete(c.u);else if(S.held.size<lim)S.held.add(c.u)}S.sel.clear();render()}
-function pairKey(a,b){return [a.u,b.u].sort().join('|')}
-async function resolvePairs(){
-let by={};S.board.forEach(c=>(by[c.id]??=[]).push(c));
-for(let arr of Object.values(by)){
- for(let i=0;i<arr.length;i++)for(let j=i+1;j<arr.length;j++){
-  let k=pairKey(arr[i],arr[j]);if(S.pairPaid.has(k))continue;
-  // each physical board card can only be consumed by one pair payout at a time
-  let used=new Set();for(let pk of S.pairPaid){let q=pk.split('|');used.add(q[0]);used.add(q[1])}
-  if(used.has(arr[i].u)||used.has(arr[j].u))continue;
-  S.pairPaid.add(k);render();[arr[i],arr[j]].forEach(c=>{let e=document.querySelector(`[data-u="${c.u}"]`);if(e)e.classList.add('pair')});
-  await wait(650);await addBase(1+tb('pair'),'PAIR! → +'+(1+tb('pair'))+' BASE');
+async function resolveClusters(fresh){
+ let freshIds=new Set(fresh.map(c=>c.id));
+ let by={};S.board.forEach(c=>(by[c.id]??=[]).push(c));
+ for(let [id,arr] of Object.entries(by)){
+  if(arr.length<2||!freshIds.has(id))continue;
+  arr.forEach(c=>{let e=document.querySelector(`[data-u="${c.u}"]`);if(e)e.classList.add('pair')});
+  await wait(650);
+  let gain=arr.length+tb('pair');
+  await addBase(gain,`CLUSTER ×${arr.length}! → +${gain} BASE`);
+  S.clusterHits++;
  }
-}}
+}
 async function doDraw(){
 if(S.busy||S.draws<=0)return;S.busy=true;S.draws--;S.sel.clear();
 let kept=S.board.filter(c=>S.held.has(c.u));let returned=S.board.filter(c=>!S.held.has(c.u));
@@ -69,12 +71,12 @@ let fresh=[];
 for(let z=0;z<3&&S.live.length;z++){let src=S.live.shift(),c={...src,u:uid(),fresh:true};S.board.push(c);fresh.push(c);render();msg.textContent='Drew '+I[c.id][0];await wait(430)}
 if(fresh.length)await addBase(fresh.reduce((a,c)=>a+val(c),0),'NEW CARDS → +'+fresh.reduce((a,c)=>a+val(c),0)+' BASE');
 for(let c of [...fresh])if(c.mod==='quick')for(let q=0;q<c.stacks&&S.live.length;q++){msg.textContent=I[c.id][0]+' QUICK → EXTRA CARD';await wait(600);let src=S.live.shift(),e={...src,u:uid(),fresh:true};S.board.push(e);fresh.push(e);render();await wait(400);await addBase(val(e),'EXTRA CARD → +'+val(e)+' BASE')}
-await resolvePairs();S.busy=false;msg.textContent='Hold cards, submit a score, or draw again.';render();checkState()
+await resolveClusters(fresh);S.busy=false;msg.textContent='Hold cards, submit a score, or draw again.';render();checkState()
 }
 async function doSubmit(){
 let g=group();if(!g||S.busy)return;S.busy=true;if(g[2]==='types'){msg.textContent=g[0]+' → +'+g[1].toFixed(2)+'×';await wait(600);S.mult+=g[1];S.typeHits++;bump('mult');bump('total');render();await wait(450)}else{S.itemHits++;await addBase(g[1],g[0]+' → +'+g[1]+' BASE')}
-let ids=new Set(S.sel);for(let c of [...S.board])if(ids.has(c.u)){S.held.delete(c.u);S.discard.push(c);S.board=S.board.filter(x=>x.u!==c.u);render();await wait(170)}
-S.sel.clear();S.busy=false;msg.textContent='Scored cards discarded.';render();checkState()
+let ids=new Set(S.sel);for(let c of [...S.board])if(ids.has(c.u)){S.held.delete(c.u);S.live.push({...S.deck[c.di],di:c.di});S.board=S.board.filter(x=>x.u!==c.u);render();await wait(170)}
+S.live=sh(S.live);S.sel.clear();S.busy=false;msg.textContent='Submitted cards returned to deck and reshuffled.';render();checkState()
 }
 function anyGroup(){if(S.board.length<3)return false;return new Set(S.board.map(c=>c.id)).size>=3}
 function checkState(){if(!S.active)return;if(score()>=S.target){msg.textContent='TARGET CLEARED! Finish any scoring you want, then COMPLETE ROUND.';draw.textContent='COMPLETE ROUND';draw.disabled=S.busy;draw.onclick=completeRound}else if(S.draws<=0){draw.disabled=true;if(anyGroup())msg.textContent='NO DRAWS LEFT — submit remaining scoring groups.';else msg.textContent='ROUND FAILED — no draws or scoring groups left.'}}
@@ -89,8 +91,8 @@ for(let i=0;i<offers.children.length;i++){spin.textContent='SPINNING...';await w
 }
 function openShop(){shop.classList.add('on');shopSummary();buildShop(true)}
 function buy(o,d){if(S.points<o.cost)return alert('Not enough Points');if(o.cat==='totem'&&S.totems.length>=3)return alert('Totem slots full in this prototype.');S.points-=o.cost;if(o.cat==='totem')S.totems.push(o.effect);if(o.cat==='mod')S.ownedMods.push({kind:o.effect,res:o.res});if(o.cat==='perm'&&o.effect==='draw')S.drawMod++;if(o.cat==='perm'&&o.effect==='slot')S.deck.push({id:sh(Object.keys(I))[0],mod:null,stacks:0,key:uid()});d.style.opacity=.4;d.querySelector('.buy').disabled=true;render();shopSummary()}
-function nextRound(){shop.classList.remove('on');S.round++;S.target=[9,15,24,36,52][S.round-1]||Math.ceil(S.target*1.4);S.base=0;S.mult=1;S.draws=2+S.drawMod;S.board=[];S.discard=[];S.sel.clear();S.held.clear();S.pairPaid.clear();S.active=true;S.busy=false;S.itemHits=S.typeHits=0;S.rerolls=0;S.live=sh(S.deck.map((c,i)=>({...c,di:i})));draw.textContent='DRAW 3';draw.onclick=doDraw;reroll.textContent='REROLL — 1 POINT';msg.textContent='Next round ready.';render()}
+function nextRound(){shop.classList.remove('on');S.round++;S.target=[9,15,24,36,52][S.round-1]||Math.ceil(S.target*1.4);S.base=0;S.mult=1;S.draws=2+S.drawMod;S.board=[];S.discard=[];S.sel.clear();S.held.clear();S.active=true;S.busy=false;S.itemHits=S.typeHits=0;S.clusterHits=0;S.rerolls=0;S.live=sh(S.deck.map((c,i)=>({...c,di:i})));draw.textContent='DRAW 3';draw.onclick=doDraw;reroll.textContent='REROLL — 1 POINT';msg.textContent='Next round ready.';render()}
 function openDeck(){if(S.active&&(S.base>0||S.board.length))return alert('Finish the current round before editing your deck.');resources.textContent='Resources: '+Object.keys(I).map(k=>I[k][0]+' '+S.inventory[k]).join(' · ');deckedit.innerHTML='';S.deck.forEach((c,i)=>{let d=document.createElement('div');d.className='dmrow';let sel=document.createElement('select');Object.keys(I).forEach(k=>{let o=document.createElement('option');o.value=k;o.textContent=I[k][0]+' — '+I[k][1]+' — '+I[k][3]+'N';o.selected=k===c.id;sel.appendChild(o)});sel.onchange=()=>{c.id=sel.value;c.mod=null;c.stacks=0};d.innerHTML='<b>Slot '+(i+1)+'</b> ';d.appendChild(sel);let m=document.createElement('div');m.className='modtag';m.textContent=c.mod?'Modifier: '+c.mod+' ×'+c.stacks:'Modifier: None';d.appendChild(m);if(S.ownedMods.length){let ms=document.createElement('select');S.ownedMods.forEach((x,j)=>{let o=document.createElement('option');o.value=j;o.textContent=(x.kind==='plus1'?'+1 Nugget':'Quick')+' / costs '+x.res+' '+I[c.id][0];ms.appendChild(o)});let b=document.createElement('button');b.textContent='APPLY';b.style.background='#914cc5';b.onclick=()=>{let j=+ms.value,x=S.ownedMods[j];if(c.mod&&c.mod!==x.kind)return alert('Only the same modifier family can stack.');if(S.inventory[c.id]<x.res)return alert('Not enough resources.');S.inventory[c.id]-=x.res;c.mod=x.kind;c.stacks++;S.ownedMods.splice(j,1);openDeck()};d.appendChild(document.createElement('br'));d.appendChild(ms);d.appendChild(b)}deckedit.appendChild(d)});deckm.classList.add('on')}
-draw.onclick=doDraw;hold.onclick=holdSelected;submit.onclick=doSubmit;deckbtn.onclick=openDeck;disc.onclick=()=>{dl.innerHTML=S.discard.map(c=>`<div class=card><div class=ico>${I[c.id][2]}</div><div class=name>${I[c.id][0]}</div></div>`).join('');dm.classList.add('on')};next.onclick=nextRound;reroll.onclick=async()=>{let cost=S.rerolls+1;if(S.points<cost)return alert('Not enough Points');S.points-=cost;S.rerolls++;reroll.textContent=`REROLL — ${S.rerolls+1} POINTS`;let frozen=S.frozen!==null?S.shopOffers[S.frozen]:null,pool=sh(U.filter(o=>!frozen||o.name!==frozen.name));S.shopOffers=frozen?[frozen,...pool.slice(0,2)]:pool.slice(0,3);S.frozen=frozen?0:null;shopSummary();await buildShop(false)};
+draw.onclick=doDraw;hold.onclick=holdSelected;submit.onclick=doSubmit;deckbtn.onclick=openDeck;disc.onclick=()=>{dl.innerHTML=`<div class="p"><div><b>Clusters:</b> ${S.clusterHits}</div><div><b>Different Items:</b> ${S.itemHits}</div><div><b>Different Types:</b> ${S.typeHits}</div></div>`;dm.classList.add('on')};next.onclick=nextRound;reroll.onclick=async()=>{let cost=S.rerolls+1;if(S.points<cost)return alert('Not enough Points');S.points-=cost;S.rerolls++;reroll.textContent=`REROLL — ${S.rerolls+1} POINTS`;let frozen=S.frozen!==null?S.shopOffers[S.frozen]:null,pool=sh(U.filter(o=>!frozen||o.name!==frozen.name));S.shopOffers=frozen?[frozen,...pool.slice(0,2)]:pool.slice(0,3);S.frozen=frozen?0:null;shopSummary();await buildShop(false)};
 S.live=sh(S.deck.map((c,i)=>({...c,di:i})));render();
 </script></body></html>
